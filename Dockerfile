@@ -1,8 +1,8 @@
-FROM golang:1.21 as builder
+FROM golang:1.21 as build
 WORKDIR /src
 COPY . .
-RUN go build -o /bin/app ./main.go
+RUN CGO_ENABLED=0 go build -o /bin/wifi_api ./main.go
 
 FROM scratch
-COPY --from=builder /bin/app /bin/app
-ENTRYPOINT ["/bin/app"]
+COPY --from=build /bin/wifi_api /bin/app
+CMD ["/bin/app"]
