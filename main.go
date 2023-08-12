@@ -4,6 +4,7 @@ import (
 	"log"
 	"math/rand"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -50,6 +51,8 @@ func (r *WifiResponse) addResult(location string, client int) {
 	r.Result = append(r.Result, Result{Location: location, Client: client})
 }
 
+var mutex = &sync.Mutex{}
+
 func main() {
 	app := fiber.New()
 	request_timestamp_log = make(map[string][]int64)
@@ -74,6 +77,7 @@ func main() {
 			return c.JSON(error_wifi_response)
 		}
 
+		mutex.Lock() // Lock for request_timestamp_log
 		// check if auth_key is not seen in request_timestamp_log
 		if _, ok := request_timestamp_log[auth_key]; !ok {
 			request_timestamp_log[auth_key] = []int64{time.Now().Unix()}
@@ -103,7 +107,7 @@ func main() {
 
 		// append request_timestamp_log
 		request_timestamp_log[auth_key] = append(request_timestamp_log[auth_key], time.Now().Unix())
-
+		mutex.Unlock() // Unlock for request_timestamp_log
 		return c.JSON(wifi_response)
 	})
 
