@@ -26,6 +26,16 @@ type WifiResponse struct {
 	Result   []Result   `json:"RESULT"`
 }
 
+func constCafeNames() []string {
+	return []string{
+		"제1학생회관",
+		"제2학생회관(인재개발원)(Headquarters of Career Services)",
+		"제3학생회관(Student Hall 3)",
+		"제4학생회관(Sangrok Student Hall)",
+		"생활과학대학(College of Human ecology)",
+	}
+}
+
 func constWifiNames() []string {
 	return []string{
 		"wifi1",
@@ -100,10 +110,12 @@ func main() {
 
 		// make random response data
 		wifi_response := NewWifiResponse()
-		for _, wifi_name := range constWifiNames() {
-			wifi_response.addOutBlock("success")
-			rand_client := rand.Intn(20)
-			wifi_response.addResult("2학생회관-"+wifi_name, rand_client)
+		for _, cafe_name := range constCafeNames() {
+			for _, wifi_name := range constWifiNames() {
+				wifi_response.addOutBlock("success")
+				rand_client := rand.Intn(20)
+				wifi_response.addResult(cafe_name+"-"+wifi_name, rand_client)
+			}
 		}
 
 		// append request_timestamp_log
